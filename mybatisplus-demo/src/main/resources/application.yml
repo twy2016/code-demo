@@ -1,8 +1,9 @@
 server:
   port: 8088
 spring:
-  main:
-    allow-bean-definition-overriding: true
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
   datasource:
     #druid 数据源专有配置
     #连接池配置
@@ -30,8 +31,8 @@ spring:
   #shardingsphere相关配置
   shardingsphere:
     datasource:
-      names: ds   #配置库的名字，随意
-      ds: #配置目前m1库的数据源信息
+      names: ds   #配置库的名字
+      ds: #配置目前ds库的数据源信息
         type: com.alibaba.druid.pool.DruidDataSource
         driverClassName: com.mysql.cj.jdbc.Driver
         url: jdbc:mysql://localhost:3306/test?serverTimezone=Asia/Shanghai&characterEncoding=utf8&useSSL=false
@@ -39,12 +40,12 @@ spring:
         password: root
     sharding:
       tables:
-        user: # 指定t_order表的数据分布情况，配置数据节点
-          actualDataNodes: ds.user_$->{0..4}
+        user: # 指定user表的数据分布情况，配置数据节点
+          actualDataNodes: ds.user_$->{0..1}
           tableStrategy:
-            inline: # 指定t_order表的分片策略，分片策略包括分片键和分片算法
+            inline: # 指定user表的分片策略，分片策略包括分片键和分片算法
               shardingColumn: id
-              algorithmExpression: user_$->{id % 5}
+              algorithmExpression: user_$->{id % 2}
         keyGenerator:
           type: SNOWFLAKE  #主键生成策略为SNOWFLAKE
           column: id  #指定主键
